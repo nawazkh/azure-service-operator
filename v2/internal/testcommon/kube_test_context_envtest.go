@@ -14,14 +14,15 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
-	"sigs.k8s.io/controller-runtime/pkg/webhook"
 	"strings"
 	"sync"
 	"time"
 
+	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
+	"sigs.k8s.io/controller-runtime/pkg/webhook"
+
 	"github.com/benbjohnson/clock"
-	"github.com/dnaeon/go-vcr/recorder"
+	recorderv1 "github.com/dnaeon/go-vcr/recorder"
 	"github.com/go-logr/logr"
 	"github.com/pkg/errors"
 	"golang.org/x/sync/semaphore"
@@ -470,7 +471,7 @@ func createEnvtestContext() (BaseTestContextFactory, context.CancelFunc) {
 
 	create := func(perTestContext PerTestContext, cfg config.Values) (*KubeBaseTestContext, error) {
 
-		replaying := perTestContext.AzureClientRecorder.Mode() == recorder.ModeReplaying
+		replaying := perTestContext.AzureClientRecorder.Mode() == recorderv1.ModeReplaying
 		testCfg := testConfig{
 			Values:             cfg,
 			Replaying:          replaying,
