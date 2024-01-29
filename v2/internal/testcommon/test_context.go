@@ -106,9 +106,7 @@ func (tc TestContext) ForTest(t *testing.T, cfg config.Values) (PerTestContext, 
 	// the specific test in question, which means that clients cannot be reused.
 	// We explicitly create a new http.Client so that the recording from one test doesn't
 	// get used for all other parallel tests.
-	httpClient := &http.Client{
-		Transport: details.CreateRoundTripper(t),
-	}
+	httpClient := details.CreateClient(t)
 
 	var globalARMClient *genericarmclient.GenericClient
 	options := &genericarmclient.GenericClientOptions{
@@ -259,6 +257,7 @@ func cassetteFileName(cassetteName string) string {
 	return cassetteName + ".yaml"
 }
 
+//TODO: Move this into test_recorder.go
 func createRecorder(cassetteName string, cfg config.Values, recordReplay bool) (testRecorder, error) {
 	v1Exists, err := cassetteFileV1Exists(cassetteName)
 	if err != nil {
@@ -269,7 +268,7 @@ func createRecorder(cassetteName string, cfg config.Values, recordReplay bool) (
 		return newTestPlayerV1(cassetteName, cfg)
 	}
 
-	return createRecorderV3(cassetteName, cfg, recordReplay)
+	return newTestRecorderV3(cassetteName, cfg, recordReplay)
 }
 
 var requestHeadersToRemove = []string{
